@@ -182,12 +182,12 @@ int main(int argc, char *argv[]) {
     return EXIT_SUCCESS;
 }
 ```
-<br /> <br /> Ketika dijalankan, kode akan memonitor proses pengguna
-![Screenshot 2024-04-20 022140](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/930655f0-669b-4a08-8384-2ca7fd96a1be) <br />
-Kemudian disimpan ke dalam file log
-![Screenshot 2024-04-20 022257](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/dce96e2b-2a95-449d-9b2b-3a9624d7d829) <br />
-Lalu jika menghentikan monitoring dan proses pengguna
-![Screenshot 2024-04-20 022420](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/f54e69f9-4f8b-4bdb-a6c0-b596fdf8e542) <br />
+<br /> <br /> Ketika dijalankan, kode akan memonitor proses pengguna <br />
+![Screenshot 2024-04-20 022140](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/930655f0-669b-4a08-8384-2ca7fd96a1be)
+<br /> <br />Kemudian disimpan ke dalam file log <br />
+![Screenshot 2024-04-20 022257](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/dce96e2b-2a95-449d-9b2b-3a9624d7d829)
+<br /> <br />Lalu jika menghentikan monitoring dan proses pengguna <br />
+![Screenshot 2024-04-20 022420](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/f54e69f9-4f8b-4bdb-a6c0-b596fdf8e542)
 ![Screenshot 2024-04-20 022318](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/e1aee9ce-8311-496a-8f23-1d11cf724a6e)
 
 
