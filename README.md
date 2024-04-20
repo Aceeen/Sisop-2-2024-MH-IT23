@@ -344,13 +344,16 @@ Jika program dijalankan, program akan mendownload file zip dari URL, mengekstrak
 <br />
 **Error yang terjadi** <br />
 Ketika command _./management -m backup_ dijalankan, folder backup tidak dapat dibuat
-![Screenshot 2024-04-20 212930](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/2c97041b-9cc2-43d2-9b17-35dcefa84065)
+![Screenshot 2024-04-20 212930](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/eee2d0a7-52cb-4565-8a87-af15c839b26d)
+
 
 <br />
-Untuk command _./managemen -m restore_ dijalankan, fungsi me restore file dalam folder library tetapi karena mode backup tidak berjalan dengan benar, maka yang di restore hanyalah berdasarkan isi folder library
-![Screenshot 2024-04-20 214150](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/5ced094c-2b47-43ce-893c-c63b303497d2)
+Untuk command _./managemen -m restore_ dijalankan, fungsi me restore file dalam folder library tetapi karena mode backup tidak berjalan dengan benar, maka yang di restore hanyalah berdasarkan isi folder library.
 
-![Screenshot 2024-04-20 214209](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/09400370-5be2-405f-9f44-f2882b7165fb)
+![Screenshot 2024-04-20 214150](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/d93d9e2d-5d6e-4390-9354-34f856925c14)
+
+![Screenshot 2024-04-20 214209](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/f327b4b1-2c17-4db4-8a32-a3eacd805844)
+
 
 
 
