@@ -1,5 +1,42 @@
 # Sisop-2-2024-MH-IT23
 
+## Anggota Kelompok
+
+| NRP        | Nama                            |
+|:----------:|:-------------------------------:|
+| 5027231020 | Acintya Edria Sudarsono         |
+| 5027231044 | Dionisius Marcell Putra Indranto|
+| 5027231072 | Aisyah Rahmasari                |
+
+- [Peraturan](#peraturan) 
+
+## Peraturan
+1. Waktu pengerjaan dimulai dari hari Senin (15 April 2024) hingga hari Sabtu (20 April 2024) pukul 23.59 WIB.
+2. Praktikan diharapkan membuat laporan penjelasan dan penyelesaian soal dalam bentuk Readme(github).
+3. Format nama repository github “Sisop-[Nomor Modul]-2024-[Kode Dosen Kelas]-[Nama Kelompok]” (contoh:Sisop-1-2024-MH-IT01).
+4. Struktur repository seperti berikut:
+			—soal_1:
+				— virus.c
+            —soal_2:
+	            — management.c
+			—soal_3:
+				— admin.c
+			—soal_4:
+				— setup.c
+	Jika melanggar struktur repo akan dianggap sama dengan curang dan menerima konsekuensi sama dengan melakukan kecurangan.
+        1. Setelah pengerjaan selesai, semua script bash, awk, dan file yang berisi cron job ditaruh di github masing - masing kelompok, dan link github diletakkan pada form yang disediakan. Pastikan     
+           github di setting ke publik.
+        2. Commit terakhir maksimal 10 menit setelah waktu pengerjaan berakhir. Jika melewati maka akan dinilai berdasarkan commit terakhir.
+        3. Jika tidak ada pengumuman perubahan soal oleh asisten, maka soal dianggap dapat diselesaikan.
+        4. Jika ditemukan soal yang tidak dapat diselesaikan, harap menuliskannya pada Readme beserta permasalahan yang ditemukan.
+        5. Praktikan tidak diperbolehkan menanyakan jawaban dari soal yang diberikan kepada asisten maupun praktikan dari kelompok lainnya.
+        6. Jika ditemukan indikasi kecurangan dalam bentuk apapun di pengerjaan soal shift, maka nilai dianggap 0.
+        7. Pengerjaan soal shift sesuai dengan modul yang telah diajarkan.
+        8. Zip dari repository dikirim ke email asisten penguji dengan subjek yang sama dengan nama judul repository, dikirim sebelum deadline dari soal shift
+        9. Jika terdapat revisi soal akan dituliskan pada halaman terakhir
+
+
+
 ### SOAL 2
 Program manajemen file <br />
 Fungsi ini akan mendownload file dari URL lalu melakukan unzipping file
@@ -108,7 +145,7 @@ Fungsi ini untuk menambahkan mode yang dapat digunakan
 void handle_signal(int signum) {
     switch (signum) {
         case SIGRTMIN_VALUE:
-            mode = ' ';
+            mode = 'd';
             break;
         case SIGUSR1:
             mode = 'b';
@@ -284,21 +321,17 @@ int main(int argc, char *argv[]) {
     signal(SIGUSR1, handle_signal);
     signal(SIGUSR2, handle_signal);
 
-    //SIGINT (CTRL+C) dan SIGTERM
+    // SIGINT (CTRL+C) dan SIGTERM
     signal(SIGINT, exit_program);
     signal(SIGTERM, exit_program);
 
-    if(mode == ' ') {
-        daemonize();
-    }
 
-
-    if (mode == 'b' || mode == 'r' || mode == ' ') {
+    if (mode == 'b' || mode == 'r') {
         download_and_extract();
         process_files();
 
         if (mode == 'b') {
-            //backup
+            // Backup
             DIR *dir;
             struct dirent *entry;
             dir = opendir(LIBRARY_FOLDER);
@@ -316,7 +349,7 @@ int main(int argc, char *argv[]) {
                 closedir(dir);
             }
         } else if (mode == 'r') {
-            //restore
+            // Restore
             DIR *dir;
             struct dirent *entry;
             dir = opendir(BACKUP_FOLDER);
@@ -343,14 +376,11 @@ Jika program dijalankan, program akan mendownload file zip dari URL, mengekstrak
 
 <br />
 **Error yang terjadi** <br />
-Ketika command _./management -m backup_ dijalankan, folder backup tidak dapat dibuat
-![Screenshot 2024-04-20 212930](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/eee2d0a7-52cb-4565-8a87-af15c839b26d)
+Ketika command ./management -m backup dijalankan, folder backup tidak dapat dibuat.
+![Screenshot 2024-04-20 212930](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/79446083-a41f-4b93-933c-e04c5daf9db8)
 
-
-<br />
-Untuk command _./managemen -m restore_ dijalankan, fungsi me restore file dalam folder library tetapi karena mode backup tidak berjalan dengan benar, maka yang di restore hanyalah berdasarkan isi folder library.
-
-![Screenshot 2024-04-20 214150](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/d93d9e2d-5d6e-4390-9354-34f856925c14)
+Untuk command ./management -m restore dijalankan, fungsi me-restore file dalam folder library tetapi karena mode backup tidak berjalan dengan benar, maka yang di restore hanyalah berdasarkan isi folder library.
+![Screenshot 2024-04-20 214150](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/1741e443-c3cb-4098-85ea-863d0720c7d6)
 
 ![Screenshot 2024-04-20 214209](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/f327b4b1-2c17-4db4-8a32-a3eacd805844)
 
