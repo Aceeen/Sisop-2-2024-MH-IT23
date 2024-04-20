@@ -1,5 +1,359 @@
 # Sisop-2-2024-MH-IT23
 
+### SOAL 2
+Program manajemen file <br />
+Fungsi ini akan mendownload file dari URL lalu melakukan unzipping file
+```
+// Menulis data ke file
+size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+    size_t written = fwrite(ptr, size, nmemb, stream);
+    fflush(stream);
+    return written;
+}
+
+// Download Zip file
+int download_file(const char *url, const char *filename) {
+    CURL *curl = curl_easy_init();
+    if (!curl) {
+        printf("Failed to initialize curl\n");
+        return -1;
+    }
+
+    FILE *file = fopen(filename, "wb");
+    if (!file) {
+        printf("Failed to open file for writing\n");
+        curl_easy_cleanup(curl);
+        return -1;
+    }
+
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L); // Follow redirects
+
+    CURLcode res = curl_easy_perform(curl);
+    if (res != CURLE_OK) {
+        printf("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+    }
+
+    fclose(file);
+    curl_easy_cleanup(curl);
+
+    return (res == CURLE_OK) ? 0 : -1;
+}
+
+// Unzip
+int unzip_file(const char *filename) {
+    char command[1024];
+    sprintf(command, "unzip %s", filename);
+    FILE *pipe = popen(command, "r");
+    if (!pipe) {
+        syslog(LOG_ERR, "Failed to unzip file");
+        return -1;
+    }
+
+    
+    char buffer[128];
+    while (fgets(buffer, sizeof(buffer), pipe) != NULL) {
+    
+    }
+
+    int status = pclose(pipe);
+    if (status == -1) {
+        syslog(LOG_ERR, "Failed to close pipe");
+        return -1;
+    } else if (WEXITSTATUS(status) != 0) {
+        syslog(LOG_ERR, "Unzip command failed");
+        return -1;
+    }
+
+    syslog(LOG_INFO, "File unzipped successfully");
+    return 0;
+}
+```
+ <br /> <br />
+ Fungsi ini membuat proses menjadi daemon dengan menggunakan fork dan umask agar dapat berjalan dengan hak akses maksimum
+```
+void daemonize() {
+    pid_t pid = fork();
+
+    if (pid < 0) {
+        exit(EXIT_FAILURE);
+    }
+
+    if (pid > 0) {
+        exit(EXIT_SUCCESS);
+    }
+
+    umask(0);
+
+    pid_t sid = setsid();
+
+    if (sid < 0) {
+        exit(EXIT_FAILURE);
+    }
+
+    if ((chdir("/")) < 0) {
+        exit(EXIT_FAILURE);
+    }
+
+    close(STDIN_FILENO);
+    close(STDOUT_FILENO);
+    close(STDERR_FILENO);
+}
+```
+<br /> <br />
+Fungsi ini untuk menambahkan mode yang dapat digunakan
+```
+void handle_signal(int signum) {
+    switch (signum) {
+        case SIGRTMIN_VALUE:
+            mode = ' ';
+            break;
+        case SIGUSR1:
+            mode = 'b';
+            break;
+        case SIGUSR2:
+            mode = 'r';
+            break;
+    }
+}
+```
+<br /> <br />
+Fungsi yang akan dipanggil ketika proses download dan ekstrak file
+```
+void download_and_extract() {
+    const char *url = "https://drive.google.com/uc?id=1rUIZmp10lXLtCIH3LAZJzRPeRks3Crup&export=download";
+    const char *filename = "library.zip";
+    if (download_file(url, filename) == 0) {
+        unzip_file(filename);
+    }
+}
+```
+<br /> <br />
+Fungsi untuk dekripsi nama file berdasarkan ROT19 menggunakan caesar ciper
+```
+//Dekripsi ROT19
+void decrypt_filename(char *filename) {
+    for (int i = 0; i < strlen(filename); i++) {
+        if (filename[i] >= 'a' && filename[i] <= 'z') {
+            filename[i] = 'a' + (filename[i] - 'a' + 19) % 26;
+        } else if (filename[i] >= 'A' && filename[i] <= 'Z') {
+            filename[i] = 'A' + (filename[i] - 'A' + 19) % 26;
+        }
+    }
+}
+```
+<br /> <br />
+Fungsi untuk memproses nama dari file yang sudah di ekstrak dari zip dan di dekripsi. Jika ditemukan d3Let3 maka file akan dihapus. Jika ditemukan r3N4mE maka file akan di rename sesuai dengan ekstensinya.
+```
+void process_files() {
+    DIR *dir;
+    struct dirent *entry;
+    dir = opendir(LIBRARY_FOLDER);
+    if (dir == NULL) {
+        syslog(LOG_ERR, "Failed to open library folder");
+        return;
+    }
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (entry->d_type == DT_REG) { 
+            char filename[MAX_FILENAME_LEN];
+            strcpy(filename, entry->d_name);
+            decrypt_filename(filename);
+            
+            // Cek "d3Let3"
+            if (strstr(filename, "d3Let3") != NULL) {
+                char filepath[MAX_PATH_LEN];
+                sprintf(filepath, "%s/%s", LIBRARY_FOLDER, entry->d_name);
+                if (remove(filepath) == 0) {
+                    syslog(LOG_INFO, "Deleted file: %s", filename);
+                    log_event("management", filename, "Successfully deleted");
+                } else {
+                    syslog(LOG_ERR, "Failed to delete file: %s", filename);
+                }
+            }
+            
+            // Cek "r3N4mE"
+            else if (strstr(filename, "r3N4mE") != NULL) {
+                char *extension = strrchr(filename, '.');
+                if (extension != NULL) {
+                    char new_filename[MAX_FILENAME_LEN];
+                    if (strcmp(extension, ".ts") == 0) {
+                        sprintf(new_filename, "helper.ts");
+                    } else if (strcmp(extension, ".py") == 0) {
+                        sprintf(new_filename, "calculator.py");
+                    } else if (strcmp(extension, ".go") == 0) {
+                        sprintf(new_filename, "server.go");
+                    } else {
+                        sprintf(new_filename, "renamed%s", extension);
+                    }
+                    char old_filepath[MAX_PATH_LEN];
+                    char new_filepath[MAX_PATH_LEN];
+                    sprintf(old_filepath, "%s/%s", LIBRARY_FOLDER, entry->d_name);
+                    sprintf(new_filepath, "%s/%s", LIBRARY_FOLDER, new_filename);
+                    if (rename(old_filepath, new_filepath) == 0) {
+                        syslog(LOG_INFO, "Renamed file: %s -> %s", filename, new_filename);
+                        log_event("management", filename, "Successfully renamed");
+                    } else {
+                        syslog(LOG_ERR, "Failed to rename file: %s -> %s", filename, new_filename);
+                    }
+                }
+            }
+        }
+    }
+    closedir(dir);
+}
+
+```
+<br /> <br />
+Fungsi ini untuk memindahkan file ke folder backup. Jika folder belum ada maka folder akan dibuat.
+```
+void move_to_backup(char *filename) {
+    //Cek backup
+    if (mkdir(BACKUP_FOLDER, 0777) == -1 && errno != EEXIST) {
+        syslog(LOG_ERR, "Failed to create backup directory: %s", strerror(errno));
+        return;
+    }
+
+    char old_path[MAX_PATH_LEN];
+    char new_path[MAX_PATH_LEN];
+    sprintf(old_path, "%s/%s", LIBRARY_FOLDER, filename);
+    sprintf(new_path, "%s/%s", BACKUP_FOLDER, filename);
+    if (rename(old_path, new_path) == 0) {
+        syslog(LOG_INFO, "Moved %s to backup", filename);
+    } else {
+        syslog(LOG_ERR, "Failed to move %s to backup: %s", filename, strerror(errno));
+    }
+}
+```
+<br /> <br />
+Fungsi untuk restore file dari folder backup
+```
+//restore dari backup
+void restore_from_backup(char *filename) {
+    char old_path[MAX_PATH_LEN];
+    char new_path[MAX_PATH_LEN];
+    sprintf(old_path, "%s/%s", BACKUP_FOLDER, filename);
+    sprintf(new_path, "%s/%s", LIBRARY_FOLDER, filename);
+    if (rename(old_path, new_path) == 0) {
+        syslog(LOG_INFO, "Restored %s from backup", filename);
+    } else {
+        syslog(LOG_ERR, "Failed to restore %s from backup", filename);
+    }
+}
+```
+<br /> <br />
+Fungsi log_event untuk menambahkan informasi waktu ke dalam file log dan exit_program untuk menghentikan program secara aman dan efisien
+```
+void log_event(const char *username, const char *filename, const char *action) {
+    time_t rawtime;
+    struct tm *timeinfo;
+    char timestamp[9];
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    strftime(timestamp, sizeof(timestamp), "%H:%M:%S", timeinfo);
+    FILE *log_file = fopen(LOG_FILE, "a");
+    if (log_file != NULL) {
+        fprintf(log_file, "[%s][%s] - %s - %s\n", username, timestamp, filename, action);
+        fclose(log_file);
+    }
+}
+
+void exit_program(int signum) {
+    closelog();
+    exit(EXIT_SUCCESS);
+}
+```
+<br /> <br />
+Fungsi main yang akan recall fungsi-fungsi sebelumnya untuk menjalankan program manajemen file dalam 3 mode, yaitu mode defaut, backup, dan restore
+```
+int main(int argc, char *argv[]) {
+    openlog("management", LOG_PID | LOG_NDELAY | LOG_NOWAIT, LOG_USER);
+    if (argc > 1) {
+        if (strcmp(argv[1], "-m") == 0) {
+            if (strcmp(argv[2], "backup") == 0) {
+                mode = 'b';
+            } else if (strcmp(argv[2], "restore") == 0) {
+                mode = 'r';
+            }
+        }
+    }
+
+    signal(SIGRTMIN, handle_signal);
+    signal(SIGUSR1, handle_signal);
+    signal(SIGUSR2, handle_signal);
+
+    //SIGINT (CTRL+C) dan SIGTERM
+    signal(SIGINT, exit_program);
+    signal(SIGTERM, exit_program);
+
+    if(mode == ' ') {
+        daemonize();
+    }
+
+
+    if (mode == 'b' || mode == 'r' || mode == ' ') {
+        download_and_extract();
+        process_files();
+
+        if (mode == 'b') {
+            //backup
+            DIR *dir;
+            struct dirent *entry;
+            dir = opendir(LIBRARY_FOLDER);
+            if (dir != NULL) {
+                while ((entry = readdir(dir)) != NULL) {
+                    if (entry->d_type == DT_REG) {
+                        char filename[MAX_FILENAME_LEN];
+                        strcpy(filename, entry->d_name);
+                        decrypt_filename(filename);
+                        if (strstr(filename, "m0V3") != NULL) {
+                            move_to_backup(entry->d_name);
+                        }
+                    }
+                }
+                closedir(dir);
+            }
+        } else if (mode == 'r') {
+            //restore
+            DIR *dir;
+            struct dirent *entry;
+            dir = opendir(BACKUP_FOLDER);
+            if (dir != NULL) {
+                while ((entry = readdir(dir)) != NULL) {
+                    if (entry->d_type == DT_REG) {
+                        char filename[MAX_FILENAME_LEN];
+                        strcpy(filename, entry->d_name);
+                        restore_from_backup(entry->d_name);
+                    }
+                }
+                closedir(dir);
+            }
+        }
+    }
+
+    closelog();
+    return 0;
+}
+```
+<br /> <br />
+Jika program dijalankan, program akan mendownload file zip dari URL, mengekstrak, lalu file akan di dekripsi.
+![Screenshot 2024-04-20 213713](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/a1d35308-6bbb-4732-9699-89326ee2ea36)
+
+<br />
+**Error yang terjadi** <br />
+Ketika command _./management -m backup_ dijalankan, folder backup tidak dapat dibuat
+![Screenshot 2024-04-20 212930](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/2c97041b-9cc2-43d2-9b17-35dcefa84065)
+
+<br />
+Untuk command _./managemen -m restore_ dijalankan, fungsi me restore file dalam folder library tetapi karena mode backup tidak berjalan dengan benar, maka yang di restore hanyalah berdasarkan isi folder library
+![Screenshot 2024-04-20 214150](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/5ced094c-2b47-43ce-893c-c63b303497d2)
+
+![Screenshot 2024-04-20 214209](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/09400370-5be2-405f-9f44-f2882b7165fb)
+
+
+
 ### SOAL 3
 Program admin.c yang akan memantau penggunanya <br /> <br />
 **Menyimpan informasi proses ke dalam file log**
