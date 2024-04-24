@@ -48,7 +48,9 @@ Pada soal ini diminta untuk membuat program :
 3. Daemon Process: Program harus berjalan sebagai daemon, yang berarti ia beroperasi di background secara terus-menerus tanpa intervensi pengguna.
 4. Tanpa Command system(): Dalam pembuatan program, tidak diizinkan menggunakan command system() yang sering digunakan untuk menjalankan perintah shell.
 5. Interval Waktu: Program harus memiliki jeda operasi selama 15 detik antara setiap eksekusi tugasnya.
-7. Logging: Program harus mencatat setiap penggantian string yang berhasil dilakukan dalam file dengan nama "virus.log" dan dengan format catatan log yang spesifik: [dd-mm-YYYY][HH:MM:SS] Suspicious string at <file_name> successfully replaced!
+6. Logging: Program harus mencatat setiap penggantian string yang berhasil dilakukan dalam file dengan nama "virus.log" dan dengan format catatan log yang spesifik: [dd-mm-YYYY][HH:MM:SS] Suspicious string at <file_name> successfully replaced!
+
+## SOAL
 
 1. Fungsi replaceStringInFile mencari tiga string spesifik dalam file ("m4LwAr3", "5pYw4R3", "R4nS0mWaR3") dan menggantinya dengan string yang lebih jelas menunjukkan jenis malware ("[MALWARE]", "[SPYWARE]", "[RANSOMWARE]"). Fungsi replaceStringInFile bertanggung jawab untuk membuka file, mencari dan mengganti string, serta menulis kembali isi yang sudah diubah ke dalam file yang sama.Fungsi ini juga mengelola sumber daya seperti alokasi memori dan penutupan file dengan tepat.
    
@@ -204,9 +206,9 @@ int main(int argc, char *argv[]) {
 ```
 ### Dokumentasi ketika program di jalankan
 
-![image](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/151058945/a8be63cc-f40f-4f2a-9432-b6d22dd4481d)
+![Screenshot 2024-04-24 100903](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/151058945/cbbe940e-9d09-4e43-b381-9876c5858e73)
 
-![image](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/151058945/7c831ddf-4110-43b4-b481-bde274d51236)
+![Screenshot 2024-04-24 101004](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/151058945/b982ea8e-12a1-4c2b-8cd0-4ff2a99b14e1)
 
 
 ### SOAL 2
