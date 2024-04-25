@@ -771,7 +771,9 @@ Fungsi ini akan membantu untuk membuka aplikasi yang diinginkan serta jumlah win
 ```
 ./setup -o <app1> <num1> <app2> <num2>.....<appN> <numN>
 ```
-Dengan command tersebut maka aplikasi yang ingin dibuka akan berjalan sesuai command
+Dengan command tersebut maka aplikasi yang ingin dibuka akan berjalan sesuai command seperti ini
+![image](https://github.com/v0rein/Sisop-2-2024-MH-IT23/assets/143814923/be5e31ef-b24c-4f86-9d65-73aacecacd48)
+
 ```
 void spawn_process(char *app) {
     pid_t pid = fork();
@@ -803,7 +805,9 @@ Lalu, kita membuat fungsi baru untuk membaca '.conf file' yang berisi nama aplik
 ```
 ./setup -f file.conf
 ```
-Untuk menjalankan fungsi tersebut dan membuka aplikasi yang diinginkan
+Maka akan muncul aplikasi - aplikasi yang telah kita tulis di '.conf file' seperti ini 
+![image](https://github.com/v0rein/Sisop-2-2024-MH-IT23/assets/143814923/30ffbdb6-74a1-42a1-b7c0-0405ce71b6ee)
+
 ```
 void close_apps_by_name(char **argv, char *app_name) {
     pid_t pid = fork();
