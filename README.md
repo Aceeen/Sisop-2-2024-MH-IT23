@@ -751,6 +751,156 @@ int main(int argc, char *argv[]) {
 ![Screenshot 2024-04-20 022420](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/f54e69f9-4f8b-4bdb-a6c0-b596fdf8e542)
 ![Screenshot 2024-04-20 022318](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/e1aee9ce-8311-496a-8f23-1d11cf724a6e)
 
+## SOAL 4
+Pada soal ini diminta untuk membuat program otomatisasi aplikasi
+```
+void open_apps(char *apps[], int num_apps, int counts[]) {
+    for (int i = 0; i < num_apps; i++) {
+        for (int j = 0; j < counts[i]; j++) {
+            pid_t pid = fork();
+            if (pid == 0) {
+                char *args[] = {apps[i], NULL};
+                execvp(apps[i], args);
+                exit(0);
+            }
+        }
+    }
+}
+```
+Fungsi ini akan membantu untuk membuka aplikasi yang diinginkan serta jumlah window yang diinginkan dari aplikasi tersebut dengan menggunakan command
+```
+./setup -o <app1> <num1> <app2> <num2>.....<appN> <numN>
+```
+Dengan command tersebut maka aplikasi yang ingin dibuka akan berjalan sesuai command
+```
+void spawn_process(char *app) {
+    pid_t pid = fork();
+    if (pid == 0) {
+        char *args[] = {app, NULL};
+        execvp(app, args);
+        exit(0);
+    }
+}
 
+void read_config(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Error opening file %s\n", filename);
+        return;
+    }
 
+    char app[MAX_APPS];
+    int num_apps;
 
+    while (fscanf(file, "%s %d", app, &num_apps)==2) {
+        for (int j = 0; j < num_apps; j++) {
+            spawn_process(app);
+        }
+    }
+}
+```
+Lalu, kita membuat fungsi baru untuk membaca '.conf file' yang berisi nama aplikasi serta jumlah window aplikasi yang ingin dibuka. Kita dapat melakukan command
+```
+./setup -f file.conf
+```
+Untuk menjalankan fungsi tersebut dan membuka aplikasi yang diinginkan
+```
+void close_apps_by_name(char **argv, char *app_name) {
+    pid_t pid = fork();
+    if (pid == 0) {
+        char *args[] = {"pkill", "-9", "-f", app_name, NULL};
+        execvp("pkill", args);
+        exit(0);
+    } else {
+        int status;
+        waitpid(pid, &status, 0);
+    }
+}
+
+void close_all_apps(char **argv) {
+    close_apps_by_name(argv, "firefox");
+    close_apps_by_name(argv, "wireshark");
+}
+```
+Kemudian kita membuat fungsi agar dapat menutup file yang telah kita buka melalui command `./setup -o <app1> <num1> <app2> <num2>.....<appN> <numN>`
+Kita dapat mengakses fungsi ini dengan command 
+```
+./setup -k
+```
+```
+void close_apps_from_config(char *config_file, char **argv) {
+    FILE *file = fopen(config_file, "r");
+    if (file == NULL) {
+        printf("Error opening file %s\n", config_file);
+        return;
+    }
+
+    char line[MAX_LINE];
+    while (fgets(line, MAX_LINE, file)) {
+        char app[MAX_LINE];
+        if (sscanf(line, "%s", app) == 1) {
+            pid_t pid = fork();
+            if (pid == 0) {
+                char *args[] = {"pkill", "-9", app, NULL};
+                execvp("pkill", args);
+                exit(0);
+            } else {
+                int status;
+                waitpid(pid, &status, 0);
+            }
+        }
+    }
+
+    fclose(file);
+}
+```
+Lalu kita juga membuat fungsi untuk menutup aplikasi yang telah kita buka melalui '.conf file' yang dapat diakses dengan command
+```
+./setup -k file.conf
+```
+Lalu untuk memanggil fungsi - fungsi yang telah kita buat sebelumnya kita membuat fungsi main yang akan tertulis seperti ini
+```
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Usage: %s -o <app1> <num1> <app2> <num2>... <appN> <numN>\n", argv[0]);
+        printf("   or: %s -f <file.conf>\n", argv[0]);
+        printf("   or: %s -k [<file.conf>]\n", argv[0]);
+        return 1;
+    }
+
+    if (strcmp(argv[1], "-o") == 0) {
+        if (argc % 2 != 0) {
+            printf("Error: Invalid arguments\n");
+            return 1;
+        }
+        int num_apps = (argc - 2) / 2;
+        char *apps[MAX_APPS];
+        int counts[MAX_APPS];
+        for (int i = 0; i < num_apps; i++) {
+            apps[i] = argv[2 + i * 2];
+            counts[i] = atoi(argv[3 + i * 2]);
+        }
+        open_apps(apps, num_apps, counts);
+    } else if (strcmp(argv[1], "-f") == 0) {
+        if (argc != 3) {
+            printf("Error: Invalid arguments\n");
+            return 1;
+        }
+        read_config(argv[2]);
+    } else if (strcmp(argv[1], "-k") == 0) {
+    if (argc == 2) {
+        close_all_apps(argv);
+    } else if (argc == 3) {
+        close_apps_from_config(argv[2], argv);
+    } else {
+        printf("Error: Invalid arguments\n");
+        return 1;
+    }
+} else {
+    printf("Error: Invalid option\n");
+    return 1;
+}
+    return 0;
+}
+```
+Selain untuk memanggil fungsi - fungsi tersebut kita juga mengatur bagaimana fungsi tersebut dipanggil melalui command yang telah diinginkan serta kita juga membuat beberapa error message apabila ada kesalahan dalam menulis command
