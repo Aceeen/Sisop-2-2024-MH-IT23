@@ -210,6 +210,16 @@ int main(int argc, char *argv[]) {
 
 ![Screenshot 2024-04-24 101004](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/151058945/b982ea8e-12a1-4c2b-8cd0-4ff2a99b14e1)
 
+### REVISI SOAL NO 1
+
+Saat program dijalankan, ia akan terus-menerus memonitoring jalur file yang telah ditentukan oleh pengguna. Proses ini berlangsung secara berkelanjutan sehingga meskipun pada awalnya tidak terdapat string yang mencurigakan di dalam file yang ada di jalur tersebut, program tetap akan melakukan pemeriksaan secara berkala. Dengan demikian, ketika terdapat file baru yang dimasukkan ke dalam jalur tersebut dan file tersebut mengandung string yang dicurigai, program akan segera mendeteksi dan melakukan modifikasi yang diperlukan pada file tersebut secara otomatis, tanpa perlu ada intervensi untuk menjalankan ulang program. Ini memastikan bahwa setiap perubahan yang mencurigakan dapat segera ditanggapi dan ditangani dengan cepat.
+
+Di gambar ini terdapat dua file txt, yang sebelumnya sudah saya cek berubah stringnya yaitu isifile.txt kemudian saya memasukkan file baru lagi yang bernama filefile.txt. File tersebut mengandung string yang dicurigai, program akan segera mendeteksi dan melakukan modifikasi yang diperlukan pada file tersebut secara otomatis, tanpa perlu ada intervensi untuk menjalankan ulang program. 
+
+![SISOPREVISIII](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/151058945/070503d6-70e7-4262-adce-e6b45e373252)
+
+![SISOPREVISIDUA](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/151058945/b9e38b2e-1327-4e11-ab41-da3fd5b9bfab)
+
 
 ### SOAL 2
 Program manajemen file <br />
