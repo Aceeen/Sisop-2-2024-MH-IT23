@@ -761,6 +761,11 @@ int main(int argc, char *argv[]) {
 ![Screenshot 2024-04-20 022420](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/f54e69f9-4f8b-4bdb-a6c0-b596fdf8e542)
 ![Screenshot 2024-04-20 022318](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/e1aee9ce-8311-496a-8f23-1d11cf724a6e)
 
+## REVISI SOAL NO 3
+Sebelumnya, command -c untuk menghentikan proses yang berjalan belum dapat tereksekusi dengan benar. Program sudah direvisi agar fungsi -c dapat berjalan dengan benar
+![Screenshot 2024-04-27 210917](https://github.com/Aceeen/Sisop-2-2024-MH-IT23/assets/150018995/daa4452f-91ae-41f4-988a-6f69820d1d8e)
+
+
 ## SOAL 4
 Pada soal ini diminta untuk membuat program otomatisasi aplikasi
 ```
